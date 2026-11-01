@@ -1,5 +1,5 @@
 /*
- * AstroMenace audio backend for AmigaChrome.
+ * AstroMenace audio backend for AmiCradle.
  * Replaces the upstream OpenAL/Vorbis implementation with the OpenGPU
  * SDL2_mixer satellite. Ogg/Vorbis decoding therefore follows the normal
  * OpenGPU media.decode -> CPU fallback ladder and output follows SDL2's
@@ -349,7 +349,7 @@ bool vw_InitAudio()
         DecodeLock = nullptr;
     }
     AudioReady = true;
-    std::cout << "Audio      : AmigaChrome OpenGPU SDL2_mixer\n";
+    std::cout << "Audio      : AmiCradle OpenGPU SDL2_mixer\n";
     return true;
 }
 

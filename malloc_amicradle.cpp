@@ -1,4 +1,4 @@
-// Copyright (c) 2026 AmigaChrome Team. MIT licence.
+// Copyright (c) 2026 AmiCradle Team. MIT licence.
 //
 // AstroMenace's malloc on AmigaOS 3.x: size classes with free lists.
 //
@@ -183,10 +183,10 @@ void *calloc(size_t count, size_t size)
     return p;
 }
 
-void malloc_amigachrome_exit(void) { malloc_exit(); }   // named in the exit list below
+void malloc_amicradle_exit(void) { malloc_exit(); }   // named in the exit list below
 
 } // extern "C"
 
 // libnix gives its own malloc's memory back from this slot (exit list,
 // priority -50), after the program's other exit work; ours goes in the same.
-ADD2EXIT(malloc_amigachrome_exit, -50);
+ADD2EXIT(malloc_amicradle_exit, -50);

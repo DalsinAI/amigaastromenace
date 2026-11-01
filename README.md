@@ -1,4 +1,4 @@
-# AstroMenace — AmigaChrome AC090
+# AstroMenace — AmiCradle AC090
 
 **Status:** SOURCE PINNED / FIRST KITCHEN BUILD WIRED
 
@@ -9,17 +9,17 @@
 - source licence: GPL-3.0-or-later
 - notable upstream change: this pin includes the 6 August 2026 GCC 16 startup-hang fix.
 
-## AmigaChrome treatment
+## AmiCradle treatment
 
 The target is AmigaOS 3.x / AC090 / 68040 + FPU.
 
 - SDL2 comes from the OpenGPU SDK (`sdl2-config --libs --gl`).
 - OpenGL comes from OpenGPU's GL.module (Mesa): virgl on the host GPU where there is one, softpipe on the 68k otherwise.
-- audio goes through the SDK's SDL2_mixer to AHI (`audio_amigachrome.cpp` replaces the OpenAL backend); the port bundles no second audio stack.
+- audio goes through the SDK's SDL2_mixer to AHI (`audio_amicradle.cpp` replaces the OpenAL backend); the port bundles no second audio stack.
 - music themes (13-31 MB once decoded) are decoded on a background thread, the loop part while the intro plays, so starting a theme never stops the game; mixer channels 0-3 are reserved for music, so sound effects never take, halt or re-volume a music channel.
 - mipmaps: the GLU shim calls `glGenerateMipmap` once after each upload, not the legacy flag that rebuilds every level on each sub-update.
 - built with `-fno-tree-loop-distribute-patterns`, as the OpenGPU SDK asks for GCC 16.
-- the release build is `build-amigaos3-runtime-fixed.sh`: it applies the target patches (the VFS, VW3D, VW2D and TGA readers made explicitly little-endian, the `AMIGACHROME` define the CMake option alone does not set, the target random seed, the screenshot readback, the optional joystick) and then `build-amigaos3.sh`, and packages a launcher that gives the game a 1 MiB stack plus a ready `gamedata.vfs`. `build-amigaos3.sh` on its own makes a binary without them, which aborts at start on the 68k.
+- the release build is `build-amigaos3-runtime-fixed.sh`: it applies the target patches (the VFS, VW3D, VW2D and TGA readers made explicitly little-endian, the `AMICRADLE` define the CMake option alone does not set, the target random seed, the screenshot readback, the optional joystick) and then `build-amigaos3.sh`, and packages a launcher that gives the game a 1 MiB stack plus a ready `gamedata.vfs`. `build-amigaos3.sh` on its own makes a binary without them, which aborts at start on the 68k.
 
 ## Running it fast
 

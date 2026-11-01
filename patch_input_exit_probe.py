@@ -44,7 +44,7 @@ static bool AMFirstMissionStageExists(const char *Name)
  */
 void Loop_Proc()
 '''
-    declaration_insert = '''#ifdef AMIGACHROME
+    declaration_insert = '''#ifdef AMICRADLE
 // Defined in main.cpp; the runtime probe uses the game's ordinary loop exit.
 void QuitFromMainLoop();
 #endif
@@ -136,7 +136,7 @@ bool NeedRecreateWindow{false};
 bool NeedQuitFromLoop{false};
 bool NeedRecreateWindow{false};
 
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
 static void AMInputExitStage(const char *Name)
 {
     BPTR File = Open((CONST_STRPTR)Name, MODE_NEWFILE);
@@ -163,7 +163,7 @@ static void AMInputExitStage(const char *Name)
                 break;
 '''
     key_insert = '''            case SDL_KEYDOWN:
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
                 if (event.key.keysym.sym == SDLK_F11) {
                     AMInputExitStage("PROGDIR:stage-keydown-received");
                 }
@@ -172,7 +172,7 @@ static void AMInputExitStage(const char *Name)
                 break;
 
             case SDL_KEYUP:
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
                 if (event.key.keysym.sym == SDLK_F11) {
                     AMInputExitStage("PROGDIR:stage-keyup-received");
                 }
@@ -191,7 +191,7 @@ static void AMInputExitStage(const char *Name)
 '''
     loop_insert = '''    // Main loop.
     Loop();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMInputExitStage("PROGDIR:stage-loop-exited");
 #endif
 
@@ -223,87 +223,87 @@ static void AMInputExitStage(const char *Name)
     // important, save config before game's window recreate
     SaveXMLConfigFile();
 '''
-    cleanup_insert = '''#ifdef AMIGACHROME
+    cleanup_insert = '''#ifdef AMICRADLE
     AMInputExitStage("PROGDIR:stage-before-cursor-release");
 #endif
     CursorRelease();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMInputExitStage("PROGDIR:stage-after-cursor-release");
     AMInputExitStage("PROGDIR:stage-before-info-destroy");
 #endif
     DestroyInfoObject();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMInputExitStage("PROGDIR:stage-after-info-destroy");
     AMInputExitStage("PROGDIR:stage-before-workshop-destroy");
 #endif
     WorkshopDestroyData();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMInputExitStage("PROGDIR:stage-after-workshop-destroy");
     AMInputExitStage("PROGDIR:stage-before-object-release");
 #endif
 
     ReleaseAllObject3D();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMInputExitStage("PROGDIR:stage-after-object-release");
     AMInputExitStage("PROGDIR:stage-before-model-release");
 #endif
     vw_ReleaseAllModel3D();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMInputExitStage("PROGDIR:stage-after-model-release");
     AMInputExitStage("PROGDIR:stage-before-particles2d-release");
 #endif
     vw_ReleaseAllParticleSystems2D();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMInputExitStage("PROGDIR:stage-after-particles2d-release");
     AMInputExitStage("PROGDIR:stage-before-particles-release");
 #endif
     vw_ReleaseAllParticleSystems();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMInputExitStage("PROGDIR:stage-after-particles-release");
     AMInputExitStage("PROGDIR:stage-before-lights-release");
 #endif
     vw_ReleaseAllLights();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMInputExitStage("PROGDIR:stage-after-lights-release");
     AMInputExitStage("PROGDIR:stage-before-fontchars-release");
 #endif
 
     vw_ReleaseAllFontChars();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMInputExitStage("PROGDIR:stage-after-fontchars-release");
     AMInputExitStage("PROGDIR:stage-before-textures-release");
 #endif
     vw_ReleaseAllTextures();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMInputExitStage("PROGDIR:stage-after-textures-release");
     AMInputExitStage("PROGDIR:stage-before-shadowmap-release");
 #endif
     ShadowMap_Release();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMInputExitStage("PROGDIR:stage-after-shadowmap-release");
     AMInputExitStage("PROGDIR:stage-before-glstuff-release");
 #endif
 
     // gl stuff -> gl context -> window
     vw_ReleaseOpenGLStuff();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMInputExitStage("PROGDIR:stage-after-glstuff-release");
     AMInputExitStage("PROGDIR:stage-before-glcontext-delete");
 #endif
     vw_DeleteOpenGLContext();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMInputExitStage("PROGDIR:stage-after-glcontext-delete");
     AMInputExitStage("PROGDIR:stage-before-window-destroy");
 #endif
     vw_DestroyWindow();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMInputExitStage("PROGDIR:stage-after-window-destroy");
     AMInputExitStage("PROGDIR:stage-before-config-save");
 #endif
 
     // important, save config before game's window recreate
     SaveXMLConfigFile();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMInputExitStage("PROGDIR:stage-after-config-save");
 #endif
 '''
@@ -326,41 +326,41 @@ static void AMInputExitStage(const char *Name)
     return 0;
 }
 '''
-    shutdown_insert = '''#ifdef AMIGACHROME
+    shutdown_insert = '''#ifdef AMICRADLE
     AMInputExitStage("PROGDIR:stage-before-font-shutdown");
 #endif
     vw_ShutdownFont();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMInputExitStage("PROGDIR:stage-after-font-shutdown");
     AMInputExitStage("PROGDIR:stage-before-text-release");
 #endif
     vw_ReleaseText();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMInputExitStage("PROGDIR:stage-after-text-release");
     AMInputExitStage("PROGDIR:stage-before-audio-shutdown");
 #endif
     vw_ShutdownAudio();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMInputExitStage("PROGDIR:stage-after-audio-shutdown");
     AMInputExitStage("PROGDIR:stage-before-vfs-shutdown");
 #endif
     vw_ShutdownVFS();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMInputExitStage("PROGDIR:stage-after-vfs-shutdown");
     AMInputExitStage("PROGDIR:stage-before-joystick-close");
 #endif
     JoystickClose();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMInputExitStage("PROGDIR:stage-after-joystick-close");
     AMInputExitStage("PROGDIR:stage-before-time-release");
 #endif
     vw_ReleaseAllTimeThread();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMInputExitStage("PROGDIR:stage-after-time-release");
     AMInputExitStage("PROGDIR:stage-before-sdl-quit");
 #endif
     SDL_Quit();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMInputExitStage("PROGDIR:stage-after-sdl-quit");
     AMInputExitStage("PROGDIR:stage-shutdown-complete");
 #endif

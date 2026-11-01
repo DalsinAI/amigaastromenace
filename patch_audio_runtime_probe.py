@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Add qualification-only audio milestones to the AmigaChrome backend.
+"""Add qualification-only audio milestones to the AmiCradle backend.
 
 The runtime gate already proves SDL audio opens. These markers go further:
 they require an Ogg asset to decode into a Mix_Chunk, a mixer channel to start
@@ -12,7 +12,7 @@ from pathlib import Path
 import sys
 
 source = Path(sys.argv[1]).resolve()
-audio_cpp = source / "src" / "core" / "audio" / "audio_amigachrome.cpp"
+audio_cpp = source / "src" / "core" / "audio" / "audio_amicradle.cpp"
 text = audio_cpp.read_text(encoding="utf-8")
 
 if "stage-audio-channel-active" in text:
@@ -21,7 +21,7 @@ if "stage-audio-channel-active" in text:
 
 include_anchor = '#include "SDL_mixer.h"\n'
 include_insert = '''#include "SDL_mixer.h"
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
 #include <proto/dos.h>
 #include <dos/dos.h>
 #endif
@@ -37,7 +37,7 @@ namespace {
 namespace_insert = '''namespace viewizard {
 namespace {
 
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
 static void AMAudioProbeStage(const char *Name)
 {
     BPTR File = Open((CONST_STRPTR)Name, MODE_NEWFILE);
@@ -57,13 +57,13 @@ if namespace_anchor not in text:
 text = text.replace(namespace_anchor, namespace_insert, 1)
 
 open_anchor = '''    AudioReady = true;
-    std::cout << "Audio      : AmigaChrome OpenGPU SDL2_mixer\\n";
+    std::cout << "Audio      : AmiCradle OpenGPU SDL2_mixer\\n";
 '''
 open_insert = '''    AudioReady = true;
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMAudioProbeStage("PROGDIR:stage-audio-open");
 #endif
-    std::cout << "Audio      : AmigaChrome OpenGPU SDL2_mixer\\n";
+    std::cout << "Audio      : AmiCradle OpenGPU SDL2_mixer\\n";
 '''
 if open_anchor not in text:
     raise RuntimeError("AstroMenace audio-open marker missing")
@@ -77,7 +77,7 @@ play_anchor = '''    m.chunk = chunk;
 play_insert = '''    m.chunk = chunk;
     m.channel = channel;
     Mix_Volume(channel, mixVolume(m.localVolume * m.globalVolume));
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMAudioProbeStage("PROGDIR:stage-audio-channel-started");
     if (Mix_Playing(channel)) {
         AMAudioProbeStage("PROGDIR:stage-audio-channel-active");
@@ -102,7 +102,7 @@ playing_insert = '''bool vw_IsAnyMusicPlaying()
 {
     for (auto &p : Music)
         if (musicActive(p.second)) {
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
             if (!AudioProbeActiveMarked && p.second.channel >= 0 &&
                 Mix_Playing(p.second.channel)) {
                 AMAudioProbeStage("PROGDIR:stage-audio-channel-active");
@@ -128,7 +128,7 @@ update_insert = '''        uint32_t delta = now - m.lastTick;
         m.lastTick = now;
         bool erase = false;
 
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
         // Some SDL_mixer targets do not report the channel active until the
         // first mixer/update pass. Qualify actual playback here as well as at
         // Mix_PlayChannel return time.
@@ -165,51 +165,51 @@ shutdown_anchor = '''void vw_ShutdownAudio()
 shutdown_insert = '''void vw_ShutdownAudio()
 {
     if (!AudioReady) {
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
         AMAudioProbeStage("PROGDIR:stage-audio-shutdown-not-ready");
 #endif
         return;
     }
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMAudioProbeStage("PROGDIR:stage-audio-before-release-sounds");
 #endif
     vw_ReleaseAllSounds();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMAudioProbeStage("PROGDIR:stage-audio-after-release-sounds");
     AMAudioProbeStage("PROGDIR:stage-audio-before-release-music");
 #endif
     vw_ReleaseAllMusic();
     stopDecodeThread();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMAudioProbeStage("PROGDIR:stage-audio-after-release-music");
     AMAudioProbeStage("PROGDIR:stage-audio-before-buffer-free");
 #endif
     for (auto &p : SoundBuffers)
         if (p.second.chunk) Mix_FreeChunk(p.second.chunk);
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMAudioProbeStage("PROGDIR:stage-audio-after-buffer-free");
 #endif
     SoundBuffers.clear();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMAudioProbeStage("PROGDIR:stage-audio-after-buffer-clear");
     AMAudioProbeStage("PROGDIR:stage-audio-before-mix-close");
 #endif
     Mix_CloseAudio();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMAudioProbeStage("PROGDIR:stage-audio-after-mix-close");
     AMAudioProbeStage("PROGDIR:stage-audio-before-mix-quit");
 #endif
     Mix_Quit();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMAudioProbeStage("PROGDIR:stage-audio-after-mix-quit");
     AMAudioProbeStage("PROGDIR:stage-audio-before-sdl-audio-quit");
 #endif
     SDL_QuitSubSystem(SDL_INIT_AUDIO);
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMAudioProbeStage("PROGDIR:stage-audio-after-sdl-audio-quit");
 #endif
     AudioReady = false;
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMAudioProbeStage("PROGDIR:stage-audio-shutdown");
 #endif
 }

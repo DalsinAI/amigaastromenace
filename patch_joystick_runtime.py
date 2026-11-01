@@ -16,17 +16,17 @@ main_cpp = source / "src" / "main.cpp"
 text = main_cpp.read_text(encoding="utf-8")
 
 old = '''    // Amiga first-light: joystick intentionally deferred until runtime is stable.
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMDiag("joystick deferred");
 #else
     JoystickInit(vw_GetTimeThread(0));
 #endif
 '''
 new = '''    // The first-light joystick deferred phase is complete. Joystick remains
-    // optional on AmigaChrome: initialise its SDL subsystem only after timer,
+    // optional on AmiCradle: initialise its SDL subsystem only after timer,
     // VFS, configuration and font setup are known-good. Failure must not
     // prevent keyboard or mouse play.
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMDiag("before joystick subsystem init");
     if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) != 0) {
         std::cerr << __func__ << "(): Couldn't init SDL joystick: "

@@ -7,15 +7,15 @@ SRC=${1:-"$ROOT/build/game-ports/sources/astromenace"}
 OUT=${2:-"$ROOT/build/os3/astromenace-runtime-fixed"}
 DIAGNOSTICS=${ASTROMENACE_DIAGNOSTICS:-0}
 RELEASE_ID=${ASTROMENACE_RELEASE_ID:-0012}
-STOVE=${STOVE:-"$HOME/AmigaChrome/stoves/os32-gcc16"}
+STOVE=${STOVE:-"$HOME/AmiCradle/stoves/os32-gcc16"}
 P="$STOVE/prefix"
 CC="$P/bin/m68k-amigaos-gcc"
 
 [ -x "$CC" ] || { echo "missing GCC16 compiler for launcher: $CC" >&2; exit 2; }
 
-# Apply the production AmigaChrome integration first because the target-random
+# Apply the production AmiCradle integration first because the target-random
 # patch adds its post-SDL reseed immediately after the SDL startup marker.
-python3 "$HERE/patch_amigaos3.py" "$SRC" "$HERE/audio_amigachrome.cpp"
+python3 "$HERE/patch_amigaos3.py" "$SRC" "$HERE/audio_amicradle.cpp"
 python3 "$HERE/patch_joystick_runtime.py" "$SRC"
 python3 "$HERE/patch_amiga_random.py" "$SRC"
 
@@ -35,8 +35,8 @@ fi
 # OpenGPU readback path is RGBA and must be converted before SDL writes a BMP.
 python3 "$HERE/patch_screenshot_rgba.py" "$SRC"
 
-# -DAMIGACHROME=ON is a CMake option, not a C/C++ preprocessor definition.
-# Without this target definition every #ifdef AMIGACHROME path (including the
+# -DAMICRADLE=ON is a CMake option, not a C/C++ preprocessor definition.
+# Without this target definition every #ifdef AMICRADLE path (including the
 # target-safe random seed) is compiled out.
 python3 "$HERE/patch_amiga_compile_define.py" "$SRC"
 
@@ -89,8 +89,8 @@ python3 "$HERE/build_gamedata_vfs.py" "$SRC" "$VFS"
 # only the canonical VFS plus the upstream licence material.
 rm -rf "$PKG/gamedata"
 
-cat > "$PKG/README-AmigaChrome.txt" <<EOF
-AstroMenace for AmigaChrome
+cat > "$PKG/README-AmiCradle.txt" <<EOF
+AstroMenace for AmiCradle
 ===========================
 
 Release: AC090 GCC16 $RELEASE_ID
@@ -118,7 +118,7 @@ https://github.com/viewizard/astromenace
 Pinned commit:
 bbdb3ac5af2774c92b85c4d9b2a238f606911e66
 
-AmigaChrome qualification:
+AmiCradle qualification:
 - CreateNewProcTags launcher path from the default small-stack Shell;
 - 1 MiB child process stack and matching CLI default-stack field;
 - VFS open and language/config load;

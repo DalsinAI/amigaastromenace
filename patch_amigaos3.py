@@ -6,8 +6,8 @@ import sys
 source = Path(sys.argv[1]).resolve()
 adapter = Path(sys.argv[2]).resolve()
 port_dir = Path(__file__).resolve().parent
-glu_source = port_dir / "glu_amigachrome.cpp"
-malloc_source = port_dir / "malloc_amigachrome.cpp"
+glu_source = port_dir / "glu_amicradle.cpp"
+malloc_source = port_dir / "malloc_amicradle.cpp"
 glu_header = port_dir / "GL" / "glu.h"
 
 cmake = source / "CMakeLists.txt"
@@ -18,14 +18,14 @@ dep_end = "    # freetype lib + header\n"
 start = text.find(dep_start)
 end = text.find(dep_end, start)
 if start < 0 or end < 0:
-    if "AmigaChrome SDL2_mixer backend" not in text:
+    if "AmiCradle SDL2_mixer backend" not in text:
         raise RuntimeError("AstroMenace audio dependency block marker missing")
 else:
     original = text[start:end]
-    replacement = """    IF(AMIGACHROME)
-        # AmigaChrome SDL2_mixer backend: OpenGPU owns decode/mixing/output.
+    replacement = """    IF(AMICRADLE)
+        # AmiCradle SDL2_mixer backend: OpenGPU owns decode/mixing/output.
         IF(NOT SDL2_MIXER_LIBRARY OR NOT SDL2_MIXER_INCLUDE_DIR)
-            MESSAGE(FATAL_ERROR "AmigaChrome SDL2_mixer SDK not provided")
+            MESSAGE(FATAL_ERROR "AmiCradle SDL2_mixer SDK not provided")
         ENDIF()
         INCLUDE_DIRECTORIES(SYSTEM ${SDL2_MIXER_INCLUDE_DIR})
         SET(ALL_LIBRARIES ${ALL_LIBRARIES} ${SDL2_MIXER_LIBRARY})
@@ -36,25 +36,25 @@ else:
 
 glob_marker = 'FILE(GLOB_RECURSE astromenace_SRCS src/*.cpp src/*.h)\n'
 insert = '''FILE(GLOB_RECURSE astromenace_SRCS src/*.cpp src/*.h)
-IF(AMIGACHROME)
+IF(AMICRADLE)
     list(FILTER astromenace_SRCS EXCLUDE REGEX "src/core/audio/(audio|buffer|music|openal|sound)\\.cpp$")
     list(APPEND astromenace_SRCS
-        "src/core/audio/audio_amigachrome.cpp"
-        "src/core/graphics/glu_amigachrome.cpp"
-        "src/core/malloc_amigachrome.cpp")
-    INCLUDE_DIRECTORIES(BEFORE "${CMAKE_SOURCE_DIR}/amigachrome-include")
+        "src/core/audio/audio_amicradle.cpp"
+        "src/core/graphics/glu_amicradle.cpp"
+        "src/core/malloc_amicradle.cpp")
+    INCLUDE_DIRECTORIES(BEFORE "${CMAKE_SOURCE_DIR}/amicradle-include")
 ENDIF()
 '''
-if "audio_amigachrome.cpp" in text and "malloc_amigachrome.cpp" not in text:
-    text = text.replace('"src/core/graphics/glu_amigachrome.cpp")', '"src/core/graphics/glu_amigachrome.cpp"\n        "src/core/malloc_amigachrome.cpp")', 1)
-if "audio_amigachrome.cpp" not in text:
+if "audio_amicradle.cpp" in text and "malloc_amicradle.cpp" not in text:
+    text = text.replace('"src/core/graphics/glu_amicradle.cpp")', '"src/core/graphics/glu_amicradle.cpp"\n        "src/core/malloc_amicradle.cpp")', 1)
+if "audio_amicradle.cpp" not in text:
     if glob_marker not in text:
         raise RuntimeError("AstroMenace source-glob marker missing")
     text = text.replace(glob_marker, insert, 1)
 
 if "TARGET_LINK_LIBRARIES(astromenace ${ALL_LIBRARIES})" in text:
-    text = text.replace("TARGET_LINK_LIBRARIES(astromenace ${ALL_LIBRARIES})", "TARGET_LINK_LIBRARIES(astromenace ${ALL_LIBRARIES} ${AMIGACHROME_PNG_LIBRARY} ${AMIGACHROME_ZLIB_LIBRARY})", 1)
-elif "TARGET_LINK_LIBRARIES(astromenace ${ALL_LIBRARIES} ${AMIGACHROME_PNG_LIBRARY} ${AMIGACHROME_ZLIB_LIBRARY})" not in text:
+    text = text.replace("TARGET_LINK_LIBRARIES(astromenace ${ALL_LIBRARIES})", "TARGET_LINK_LIBRARIES(astromenace ${ALL_LIBRARIES} ${AMICRADLE_PNG_LIBRARY} ${AMICRADLE_ZLIB_LIBRARY})", 1)
+elif "TARGET_LINK_LIBRARIES(astromenace ${ALL_LIBRARIES} ${AMICRADLE_PNG_LIBRARY} ${AMICRADLE_ZLIB_LIBRARY})" not in text:
     raise RuntimeError("AstroMenace final link marker missing")
 
 cmake.write_text(text, encoding="utf-8")
@@ -97,7 +97,7 @@ main_text = main_cpp.read_text(encoding="utf-8")
 
 include_anchor = '#include "SDL2/SDL.h"\n'
 diag_include = '''#include "SDL2/SDL.h"
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
 #include <proto/dos.h>
 #include <dos/dos.h>
 static void AMDiag(const char *s)
@@ -157,7 +157,7 @@ old_joystick = """    // should be called after vw_InitTimeThread(0)
     JoystickInit(vw_GetTimeThread(0));
 """
 new_joystick = """    // Amiga first-light: joystick intentionally deferred until runtime is stable.
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMDiag("joystick deferred");
 #else
     JoystickInit(vw_GetTimeThread(0));
@@ -200,7 +200,7 @@ for old, new in replacements:
 
 main_cpp.write_text(main_text, encoding="utf-8")
 
-# AmigaChrome one-click packaging: if gamedata.vfs is absent but the
+# AmiCradle one-click packaging: if gamedata.vfs is absent but the
 # redistributable upstream gamedata/ tree is present beside the executable,
 # build the VFS automatically on first launch and then continue normally.
 main_text = main_cpp.read_text(encoding="utf-8")
@@ -211,7 +211,7 @@ old_vfs = """    if (vw_OpenVFS(GetDataPath() + "gamedata.vfs", GAME_VFS_BUILD) 
     }
 """
 new_vfs = """    if (vw_OpenVFS(GetDataPath() + "gamedata.vfs", GAME_VFS_BUILD) != 0) {
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
         AMDiag("VFS missing - starting first-launch pack");
         std::cerr << __func__ << "(): creating gamedata.vfs from bundled gamedata/ on first launch.\\n";
         if (ConvertFS2VFS(GetDataPath() + "gamedata/", GetDataPath() + "gamedata.vfs") == 0
@@ -236,16 +236,16 @@ if "creating gamedata.vfs from bundled gamedata/" not in main_text:
     main_text = main_text.replace(old_vfs, new_vfs, 1)
 main_cpp.write_text(main_text, encoding="utf-8")
 
-dst = source / "src" / "core" / "audio" / "audio_amigachrome.cpp"
+dst = source / "src" / "core" / "audio" / "audio_amicradle.cpp"
 shutil.copy2(adapter, dst)
 
-glu_dst = source / "src" / "core" / "graphics" / "glu_amigachrome.cpp"
+glu_dst = source / "src" / "core" / "graphics" / "glu_amicradle.cpp"
 shutil.copy2(glu_source, glu_dst)
 # The game's own allocator: size classes, not libnix's walk through exec's
-# Allocate and Deallocate on every new and delete (malloc_amigachrome.cpp).
-shutil.copy2(malloc_source, source / "src" / "core" / "malloc_amigachrome.cpp")
-glu_inc = source / "amigachrome-include" / "GL"
+# Allocate and Deallocate on every new and delete (malloc_amicradle.cpp).
+shutil.copy2(malloc_source, source / "src" / "core" / "malloc_amicradle.cpp")
+glu_inc = source / "amicradle-include" / "GL"
 glu_inc.mkdir(parents=True, exist_ok=True)
 shutil.copy2(glu_header, glu_inc / "glu.h")
 
-print("patched AstroMenace to use AmigaChrome SDL2_mixer audio and OpenGPU GLU shim")
+print("patched AstroMenace to use AmiCradle SDL2_mixer audio and OpenGPU GLU shim")
