@@ -2,7 +2,7 @@
 set -eu
 
 HERE=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-ROOT=$(CDPATH= cd -- "$HERE/../.." && pwd)
+ROOT=$HERE
 SRC=${1:-"$ROOT/build/game-ports/sources/astromenace"}
 OUT=${2:-"$ROOT/build/os3/astromenace-runtime-fixed"}
 DIAGNOSTICS=${ASTROMENACE_DIAGNOSTICS:-0}
