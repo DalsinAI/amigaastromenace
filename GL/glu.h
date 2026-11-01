@@ -1,5 +1,5 @@
-#ifndef AMIGACHROME_GLU_H
-#define AMIGACHROME_GLU_H
+#ifndef AMICRADLE_GLU_H
+#define AMICRADLE_GLU_H
 
 #include <GL/gl.h>
 

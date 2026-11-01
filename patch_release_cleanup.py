@@ -17,10 +17,10 @@ loading_cpp = source / "src" / "assets" / "loading.cpp"
 
 main_text = main_cpp.read_text(encoding="utf-8")
 for block in (
-    '''\n#ifdef AMIGACHROME
+    '''\n#ifdef AMICRADLE
     AMStageFile("PROGDIR:stage-after-asset-load");
 #endif''',
-    '''\n#ifdef AMIGACHROME
+    '''\n#ifdef AMICRADLE
     AMStageFile("PROGDIR:stage-main-menu-ready");
 #endif''',
 ):
@@ -55,7 +55,7 @@ main_cpp.write_text(main_text, encoding="utf-8")
 
 loading_text = loading_cpp.read_text(encoding="utf-8")
 helper = '''#include "SDL2/SDL.h"
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
 #include <proto/dos.h>
 #include <dos/dos.h>
 static void AMAssetDiag(const char *Message)

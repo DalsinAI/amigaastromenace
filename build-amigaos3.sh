@@ -5,7 +5,7 @@ HERE=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 ROOT=$HERE
 SRC=${1:-"$ROOT/build/game-ports/sources/astromenace"}
 OUT=${2:-"$ROOT/build/os3/astromenace"}
-STOVE=${STOVE:-"$HOME/AmigaChrome/stoves/os32-gcc16"}
+STOVE=${STOVE:-"$HOME/AmiCradle/stoves/os32-gcc16"}
 P="$STOVE/prefix"
 SYS="$P/m68k-amigaos"
 DEPS=$(python3 "$ROOT/scripts/port_dependencies.py" verify --stove "$STOVE" --require zlib png freetype)
@@ -62,7 +62,7 @@ FT_INC=$(dirname "$FT_HEADER")
 # source tree first and sets ASTROMENACE_SOURCE_PREPATCHED=1: patching again
 # here would overwrite it just before compiling.
 if [ "${ASTROMENACE_SOURCE_PREPATCHED:-0}" != "1" ]; then
-  python3 "$HERE/patch_amigaos3.py" "$SRC" "$HERE/audio_amigachrome.cpp"
+  python3 "$HERE/patch_amigaos3.py" "$SRC" "$HERE/audio_amicradle.cpp"
   python3 "$HERE/patch_amiga_random.py" "$SRC"
 fi
 
@@ -81,7 +81,7 @@ cmake -S "$SRC" -B "$OUT" \
   -DCMAKE_TOOLCHAIN_FILE="$ROOT/toolchain/amigaos3-opengpu.cmake" \
   -DCMAKE_BUILD_TYPE=Release \
   -DAMIGA_STOVE="$STOVE" \
-  -DAMIGACHROME=ON \
+  -DAMICRADLE=ON \
   -DDONTCREATEVFS=1 \
   -DCMAKE_INCLUDE_PATH="$SYS/include;$SYS/include/SDL2;$DEPS/include" \
   -DCMAKE_LIBRARY_PATH="$SYS/lib;$P/lib;$DEPS/lib" \
@@ -94,8 +94,8 @@ cmake -S "$SRC" -B "$OUT" \
   -DOPENGL_gl_LIBRARY="$GL_LIB" \
   -DFREETYPE_INCLUDE_DIRS="$FT_INC" \
   -DFREETYPE_LIBRARY_RELEASE="$FREETYPE_LIB" \
-  -DAMIGACHROME_PNG_LIBRARY="$PNG_LIB" \
-  -DAMIGACHROME_ZLIB_LIBRARY="$ZLIB_LIB" \
+  -DAMICRADLE_PNG_LIBRARY="$PNG_LIB" \
+  -DAMICRADLE_ZLIB_LIBRARY="$ZLIB_LIB" \
   -DCMAKE_EXE_LINKER_FLAGS="$SDL_LIBS"
 
 cmake --build "$OUT" --target astromenace -j${JOBS:-4}
@@ -114,8 +114,8 @@ cp "$BIN" "$PKG/AstroMenace"
 cp -a "$SRC/gamedata" "$PKG/gamedata"
 cp "$SRC/LICENSE.md" "$PKG/LICENSE.md"
 cp -a "$SRC/licenses" "$PKG/licenses"
-cat > "$PKG/README-AmigaChrome.txt" <<EOF
-AstroMenace for AmigaChrome
+cat > "$PKG/README-AmiCradle.txt" <<EOF
+AstroMenace for AmiCradle
 ===========================
 
 Target: AmigaOS 3.x / AC090 / 68040 + FPU
@@ -128,7 +128,7 @@ name needs SDL2.module 3 with the text-input fix (openamigartg #67).
 
 Launch AstroMenace from this directory.
 
-On the first launch, if gamedata.vfs is not present, the AmigaChrome build
+On the first launch, if gamedata.vfs is not present, the AmiCradle build
 creates it automatically from the bundled, redistributable upstream gamedata/
 tree. Subsequent launches use gamedata.vfs directly.
 

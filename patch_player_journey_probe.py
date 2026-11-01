@@ -86,13 +86,13 @@ static bool AMFirstMissionRequested()
         break;
 '''
     game_insert = '''    case eMenuStatus::GAME:
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
         if (MissionFrameCount == 0) {
             AMFirstFrameStage("PROGDIR:stage-first-game-enter");
         }
 #endif
         DrawGame();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
         ++MissionFrameCount;
         if (MissionFrameCount == 1) {
             AMFirstFrameStage("PROGDIR:stage-first-game-drawn");
@@ -105,11 +105,11 @@ static bool AMFirstMissionRequested()
     loop_text = loop_text.replace(game_anchor, game_insert, 1)
 
     end2d_anchor = '''    vw_End2DMode();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     if (FirstFrameProbe) {
 '''
     end2d_insert = '''    vw_End2DMode();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     if (MenuStatus == eMenuStatus::WORKSHOP &&
         MenuContentTransp >= 0.99f &&
         !WorkshopFrameCaptureAttempted) {
@@ -209,7 +209,7 @@ command_text = command_cpp.read_text(encoding="utf-8")
 if "stage-game-init-complete" not in command_text:
     include_anchor = '#include "game.h" // FIXME "game.h" should be replaced by individual headers\n'
     include_insert = '''#include "game.h" // FIXME "game.h" should be replaced by individual headers
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
 #include <proto/dos.h>
 #include <dos/dos.h>
 #endif
@@ -225,7 +225,7 @@ namespace astromenace {
     namespace_insert = '''namespace viewizard {
 namespace astromenace {
 
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
 static void AMCommandStage(const char *Name)
 {
     BPTR File = Open((CONST_STRPTR)Name, MODE_NEWFILE);
@@ -250,20 +250,20 @@ static void AMCommandStage(const char *Name)
         break;
 '''
     case_insert = '''    case eCommand::SWITCH_FROM_MENU_TO_GAME: // also used for mission restart
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
         AMCommandStage("PROGDIR:stage-before-game-prepare");
 #endif
         PrepareToSwitchStatus();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
         AMCommandStage("PROGDIR:stage-before-game-init");
 #endif
         InitGame();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
         AMCommandStage("PROGDIR:stage-game-init-complete");
 #endif
         PlayMusicTheme(eMusicTheme::GAME, 2000, 2000);
         PlayVoicePhrase(eVoicePhrase::PrepareForAction, 1.0f);
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
         AMCommandStage("PROGDIR:stage-game-audio-requested");
 #endif
         break;

@@ -26,7 +26,7 @@ loading_cpp = source / "src" / "assets" / "loading.cpp"
 
 rand_text = rand_cpp.read_text(encoding="utf-8")
 old_seed = "    static std::default_random_engine gen{std::random_device{}()};"
-new_seed = """#ifdef AMIGACHROME
+new_seed = """#ifdef AMICRADLE
     // AmigaOS libstdc++ has no dependable std::random_device entropy source.
     // A failure here occurs in a global constructor before main() and ends as
     // a bare \"Program aborted\".  Start from a valid deterministic state;
@@ -42,7 +42,7 @@ if "0x41535452u" not in rand_text:
     rand_text = rand_text.replace(old_seed, new_seed, 1)
 
 seed_function = """
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
 /*
  * Replace the conservative pre-main seed once SDL's timer subsystem is live.
  * Keep zero out of minstd_rand0's state because zero is its fixed point.
@@ -66,7 +66,7 @@ math_text = math_h.read_text(encoding="utf-8")
 math_anchor = "// Generate random float in range [0.0f, 1.0f).\nfloat vw_fRand();"
 math_insert = """// Generate random float in range [0.0f, 1.0f).
 float vw_fRand();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
 // Reseed the target-safe random engine after SDL's timer is available.
 void vw_SeedRandom(unsigned Seed);
 #endif"""
@@ -79,7 +79,7 @@ math_h.write_text(math_text, encoding="utf-8")
 main_text = main_cpp.read_text(encoding="utf-8")
 main_anchor = '    AMDiag("after SDL base init");\n'
 main_insert = '''    AMDiag("after SDL base init");
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     vw_SeedRandom(static_cast<unsigned>(SDL_GetTicks()) ^ 0x41535452u);
     AMDiag("random engine reseeded");
 #endif
@@ -103,7 +103,7 @@ if "AMMEM:" not in main_text:
     main_text = main_text.replace(include_anchor, include_insert, 1)
 
     function_anchor = "int main(int argc, char *argv[])\n{\n"
-    diagnostic_functions = """#ifdef AMIGACHROME
+    diagnostic_functions = """#ifdef AMICRADLE
 static void AMMemory(const char *Where)
 {
     Printf((CONST_STRPTR)\"AMMEM: %s free=%lu largest=%lu\\n\",
@@ -146,7 +146,7 @@ int main(int argc, char *argv[])
 
     entry_anchor = '    AMDiag("entered main");\n'
     entry_insert = '''    AMDiag("entered main");
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     std::set_new_handler(AMOutOfMemory);
     std::set_terminate(AMTerminateFailure);
     AMMemory("main start");
@@ -158,7 +158,7 @@ int main(int argc, char *argv[])
 
 asset_anchor = '    AMDiag("after asset load");'
 asset_insert = '''    AMDiag("after asset load");
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMStageFile("PROGDIR:stage-after-asset-load");
 #endif'''
 if 'stage-after-asset-load' not in main_text:
@@ -168,7 +168,7 @@ if 'stage-after-asset-load' not in main_text:
 
 menu_anchor = '    AMDiag("main menu ready");'
 menu_insert = '''    AMDiag("main menu ready");
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     AMStageFile("PROGDIR:stage-main-menu-ready");
 #endif'''
 if 'stage-main-menu-ready' not in main_text:
@@ -182,7 +182,7 @@ loading_text = loading_cpp.read_text(encoding="utf-8")
 if "AMLOAD:" not in loading_text:
     include_anchor = '#include "SDL2/SDL.h"\n'
     include_insert = '''#include "SDL2/SDL.h"
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
 #include <proto/dos.h>
 #include <dos/dos.h>
 static void AMAssetDiag(const char *Message)

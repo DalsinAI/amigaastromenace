@@ -46,7 +46,7 @@ old = '''    // fixed for BMP format, supported by libSDL
 new = '''    // fixed for BMP format, supported by libSDL
     constexpr uint8_t BitsPerPixels = 24;
     constexpr uint8_t OutputChannels = 3;
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     // OpenGPU/WebGL readback is RGBA. Keep the read buffer at four bytes per
     // pixel, then discard alpha while copying into SDL's 24-bit BMP surface.
     constexpr uint8_t ReadChannels = 4;
@@ -69,7 +69,7 @@ new = '''    // fixed for BMP format, supported by libSDL
     // don't use std::vector here, since it allocates AND value-initializes
     std::unique_ptr<uint8_t[]> Pixels{new uint8_t[ReadChannels * Width * Height]};
 
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     glReadPixels(0, 0, Width, Height, GL_RGBA, GL_UNSIGNED_BYTE, Pixels.get());
 #else
     glReadPixels(0, 0, Width, Height, GL_RGB, GL_UNSIGNED_BYTE, Pixels.get());

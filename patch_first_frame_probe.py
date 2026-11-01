@@ -21,7 +21,7 @@ loop_text = loop_cpp.read_text(encoding="utf-8")
 if "stage-first-frame-captured" not in loop_text:
     include_anchor = '#include "SDL2/SDL.h"\n'
     include_insert = '''#include "SDL2/SDL.h"
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
 #include <proto/dos.h>
 #include <dos/dos.h>
 #endif
@@ -37,7 +37,7 @@ namespace astromenace {
     namespace_insert = '''namespace viewizard {
 namespace astromenace {
 
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
 static void AMFirstFrameStage(const char *Name)
 {
     BPTR File = Open((CONST_STRPTR)Name, MODE_NEWFILE);
@@ -60,13 +60,13 @@ static void AMFirstFrameStage(const char *Name)
 '''
     entry_insert = '''void Loop_Proc()
 {
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     static bool FirstFrameProbe = true;
     if (FirstFrameProbe) AMFirstFrameStage("PROGDIR:stage-loop-enter");
     static bool FirstFrameCaptureArmed = false;
 #endif
     CursorUpdate();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     if (FirstFrameProbe) AMFirstFrameStage("PROGDIR:stage-cursor-updated");
 #endif
 '''
@@ -79,7 +79,7 @@ static void AMFirstFrameStage(const char *Name)
     switch (MenuStatus) {
 '''
     begin_insert = '''    vw_BeginRendering(RI_COLOR_BUFFER | RI_DEPTH_BUFFER);
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     if (FirstFrameProbe) AMFirstFrameStage("PROGDIR:stage-render-begun");
 #endif
 
@@ -94,7 +94,7 @@ static void AMFirstFrameStage(const char *Name)
     vw_Start2DMode(-1,1);
 '''
     switch_insert = '''    }
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     if (FirstFrameProbe) AMFirstFrameStage("PROGDIR:stage-menu-drawn");
 #endif
 
@@ -110,12 +110,12 @@ static void AMFirstFrameStage(const char *Name)
     vw_EndRendering();
 '''
     overlay_insert = '''    cFPS::GetInstance().Draw();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     if (FirstFrameProbe) AMFirstFrameStage("PROGDIR:stage-overlays-drawn");
 #endif
 
     vw_End2DMode();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     if (FirstFrameProbe) {
         // InitMenu deliberately starts from a black fade. Wait until the menu
         // content has reached full opacity before arming the one-shot capture.
@@ -133,7 +133,7 @@ static void AMFirstFrameStage(const char *Name)
     }
 #endif
     vw_EndRendering();
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     // Keep advancing the real menu fade, but do not proceed to the mission
     // request until a fully visible menu frame has actually been presented.
     if (FirstFrameProbe && !FirstFrameCaptureArmed) {
@@ -157,7 +157,7 @@ int vw_Screenshot(int Width, int Height, const std::string &FileName);
 '''
     graphics_insert = '''// Create screenshot from current OpenGL surface.
 int vw_Screenshot(int Width, int Height, const std::string &FileName);
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
 // Capture the composed default framebuffer immediately before the next swap.
 void vw_ArmDiagnosticFrameCapture(const char *FileName,
                                   const char *SuccessMarkerName,
@@ -174,7 +174,7 @@ if "DiagnosticCaptureFile" not in gl_text:
     gl_include_anchor = '#include "SDL2/SDL.h"\n#include <string.h>\n'
     gl_include_insert = '''#include "SDL2/SDL.h"
 #include <string.h>
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
 #include <proto/dos.h>
 #include <dos/dos.h>
 #endif
@@ -191,7 +191,7 @@ std::shared_ptr<sFBO> ResolveFBO{};
     state_insert = '''// resolve FBO (for blit main FBO with multisample)
 std::shared_ptr<sFBO> ResolveFBO{};
 
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
 const char *DiagnosticCaptureFile{nullptr};
 const char *DiagnosticCaptureSuccessMarker{nullptr};
 const char *DiagnosticCaptureFailureMarker{nullptr};
@@ -219,7 +219,7 @@ static void WriteDiagnosticCaptureMarker(const char *Name)
  */
 uintptr_t  vw_GetSDLWindow()
 '''
-    function_insert = '''#ifdef AMIGACHROME
+    function_insert = '''#ifdef AMICRADLE
 void vw_ArmDiagnosticFrameCapture(const char *FileName,
                                   const char *SuccessMarkerName,
                                   const char *FailureMarkerName)
@@ -247,7 +247,7 @@ uintptr_t  vw_GetSDLWindow()
 '''
     end_insert = '''    }
 
-#ifdef AMIGACHROME
+#ifdef AMICRADLE
     // The main FBO has now been resolved and drawn to framebuffer 0. This is
     // the first point where glReadPixels sees the same composed image that the
     // following swap will present.
