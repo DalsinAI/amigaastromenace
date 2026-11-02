@@ -101,7 +101,7 @@ Input: keyboard, mouse and optional SDL joystick/gamepad
 
 For speed: a truecolour RTG screen with openrtg.library 0.15 or later, so a
 frame goes straight to the screen (GetEnv GLAPresent says direct). The pilot
-name needs SDL2.module 3 with the text-input fix (openamigartg #67).
+name needs SDL2.module 3 with the text-input fix (gfopenrtg #67).
 
 Keep every file together in this directory and launch AstroMenace. The small
 AstroMenace command loads AstroMenace.bin and starts it as a dedicated AmigaDOS

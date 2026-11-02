@@ -124,7 +124,7 @@ Audio: OpenGPU SDL2_mixer -> AHI
 
 For speed: a truecolour RTG screen with openrtg.library 0.15 or later, so a
 frame goes straight to the screen (GetEnv GLAPresent says direct). The pilot
-name needs SDL2.module 3 with the text-input fix (openamigartg #67).
+name needs SDL2.module 3 with the text-input fix (gfopenrtg #67).
 
 Launch AstroMenace from this directory.
 
