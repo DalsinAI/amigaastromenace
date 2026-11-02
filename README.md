@@ -24,7 +24,7 @@ The target is AmigaOS 3.x / AC090 / 68040 + FPU.
 ## Running it fast
 
 - A truecolour RTG screen and openrtg.library 0.15 or later, so each frame goes straight to the screen: `GetEnv GLAPresent` says `direct`. Otherwise every frame is read back and copied, about a quarter of the 68k's time.
-- SDL2.module 3 with the text-input fix (openamigartg #67) for the pilot name. The game needs no relink for it.
+- SDL2.module 3 with the text-input fix (gfopenrtg #67) for the pilot name. The game needs no relink for it.
 - `SDL_OPENGPU_STATS=1` shows what is drawn where. VSync in the game's options does nothing: OpenGPU stores the swap interval but does not wait.
 - Known cost: each texture or buffer transfer is a synchronous round trip to the host, and client-side vertex arrays (AstroMenace's 2D and text) are copied every draw. Screens with many strings (the pilot profile) pay that per string.
 - Ogg/Vorbis and FreeType are shared SDK dependencies, not private copies carried by the game.

@@ -1,7 +1,7 @@
 # Standalone port repository
 
 `amigaastromenace` is the canonical home of the AmigaOS 3.x / AmiCradle work for
-`AstroMenace`. Its history was split from `DalsinAI/amigachrome-gameports` without
+`AstroMenace`. Its history was split from `DalsinAI/amicradle-gameports` without
 flattening the commits.
 
 Repository-local build support under `scripts/`, `toolchain/` and `gameports/`
