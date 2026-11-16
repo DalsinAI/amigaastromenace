@@ -1,0 +1,70 @@
+{
+  "schema": 1,
+  "date": "2026-11-16",
+  "status": "open8_native_build_and_draft_candidate_qualified_runtime_pending",
+  "repo": "DalsinAI/amigaastromenace",
+  "pr": 5,
+  "build_recipe_head": "44c2491fde91b77c03c45e4459753a02fb6b72b6",
+  "source": {
+    "repo": "viewizard/astromenace",
+    "commit": "bbdb3ac5af2774c92b85c4d9b2a238f606911e66"
+  },
+  "compiler": {
+    "release": "GFOpenAmigaGCC 16.2.0-open8",
+    "archive_sha256": "4855915429d8d623037af5aa911b2c3dd6b3ae98eb557eb22c4e76c4fbacf31b",
+    "provenance_verified_files": 2756,
+    "release_guard": "scripts/verify_open8_stove.py"
+  },
+  "sdk": {
+    "sdl2_gl_mixer": "reused from earlier SDK donor, not rebuilt under Open8",
+    "codec_inventory": "staged SHA-locked zlib, png and freetype; reused_not_rebuilt",
+    "runtime_modules_qualification": "NOT RUN"
+  },
+  "artifacts": {
+    "AstroMenace": {
+      "size": 7092,
+      "sha256": "03ecca1e545e88128229e65732171fd1a59fc017c062bc49ad803ab04c8998a8",
+      "type": "AmigaOS HUNK child-process launcher",
+      "stack_bytes": 1048576
+    },
+    "AstroMenace.bin": {
+      "size": 4876096,
+      "sha256": "0c624650504306042a655969888dab1c67ab65c1d02ce1762ae72a047460dc31",
+      "type": "AmigaOS HUNK 68040 game"
+    },
+    "gamedata.vfs": {
+      "size": 116020504,
+      "sha256": "0e457c97cc3ad4e41a30933f660064d2bc7b6d9ece0f372c0419e6fd38d86852",
+      "entries": 518,
+      "build_number": 250208
+    }
+  },
+  "archives": {
+    "AstroMenace-open8-rc1-test.lha": {
+      "sha256": "cac303ceccf3c550eb55a9412a372f553eb80b52fe02f5af61408ffa4dd28056",
+      "verified": "lha t; re-extracted; diff -qr vs staging; SHA256SUMS PASS"
+    },
+    "AstroMenace-open8-rc1-test.zip": {
+      "sha256": "1437913e478bce624e77ea6131ee13df7e3f20d8f3166f8bf1b88bdfa7a72cb9",
+      "verified": "unzip -tq PASS"
+    }
+  },
+  "checks": {
+    "compiler_receipt": "PASS",
+    "src_build": "PASS",
+    "launcher_build": "PASS",
+    "hunk_format": "PASS",
+    "m68040_fpcr_scan": "PASS none",
+    "vfs_full_directory_readback": "PASS",
+    "stove_regression_and_vfs_tests": "12/12 PASS",
+    "shell_syntax": "PASS",
+    "guest_first_light": "NOT RUN",
+    "shipyard": "NOT RUN",
+    "mission_one": "NOT RUN",
+    "input": "NOT RUN",
+    "ahi_audio": "NOT RUN",
+    "clean_exit": "NOT RUN",
+    "frame_performance": "NOT RUN"
+  },
+  "constraints": "No production or existing lab touched; checkout and output in Team 1 scratch. Draft RC assets only until new isolated AmigaOS 3.2.3 68040/68060 run. Do not merge or publish without Dale's final approval."
+}
