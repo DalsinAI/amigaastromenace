@@ -1,6 +1,6 @@
 # AstroMenace — AmiCradle AC090
 
-**Status:** SOURCE PINNED / FIRST KITCHEN BUILD WIRED
+**Status:** OPEN8 NATIVE BUILD + RC1 TEST PACKAGE VERIFIED; FIRST-LIGHT GUEST QUALIFICATION PENDING (16 NOV 2026)
 
 ## Upstream
 
@@ -19,7 +19,7 @@ The target is AmigaOS 3.x / AC090 / 68040 + FPU.
 - music themes (13-31 MB once decoded) are decoded on a background thread, the loop part while the intro plays, so starting a theme never stops the game; mixer channels 0-3 are reserved for music, so sound effects never take, halt or re-volume a music channel.
 - mipmaps: the GLU shim calls `glGenerateMipmap` once after each upload, not the legacy flag that rebuilds every level on each sub-update.
 - built with `-fno-tree-loop-distribute-patterns`, as the OpenGPU SDK asks for GCC 16.
-- the release build is `build-amigaos3-runtime-fixed.sh`: it applies the target patches (the VFS, VW3D, VW2D and TGA readers made explicitly little-endian, the `AMICRADLE` define the CMake option alone does not set, the target random seed, the screenshot readback, the optional joystick) and then `build-amigaos3.sh`, and packages a launcher that gives the game a 1 MiB stack plus a ready `gamedata.vfs`. `build-amigaos3.sh` on its own makes a binary without them, which aborts at start on the 68k.
+- the Open8 release build requires an explicit `STOVE` pointing at a provenance-verified GFOpenAmigaGCC 16.2.0-open8 stage; both build entry points reject older or tampered compiler receipts. The release build is `build-amigaos3-runtime-fixed.sh`: it applies the target patches (the VFS, VW3D, VW2D and TGA readers made explicitly little-endian, the `AMICRADLE` define the CMake option alone does not set, the target random seed, the screenshot readback, the optional joystick) and then `build-amigaos3.sh`, and packages a launcher that gives the game a 1 MiB stack plus a ready `gamedata.vfs`. `build-amigaos3.sh` on its own makes a binary without them, which aborts at start on the 68k.
 
 ## Running it fast
 
@@ -29,6 +29,22 @@ The target is AmigaOS 3.x / AC090 / 68040 + FPU.
 - Known cost: each texture or buffer transfer is a synchronous round trip to the host, and client-side vertex arrays (AstroMenace's 2D and text) are copied every draw. Screens with many strings (the pilot profile) pay that per string.
 - Ogg/Vorbis and FreeType are shared SDK dependencies, not private copies carried by the game.
 - target-side VFS generation is disabled during cross-build; runtime data packaging is a separate, reproducible release step.
+
+## Open8 RC1 engineering test candidate (16 November 2026)
+
+A fresh pinned-source build on daletop produced an AmigaOS HUNK game binary
+(`AstroMenace.bin`), the dedicated 1 MiB-stack launcher (`AstroMenace`), and
+a prebuilt 518-entry `gamedata.vfs`. Both binaries pass the 68040 FPCR scan.
+Twelve focused VFS/Open8 staging tests pass; Open8 receipt verifies 2,756
+compiler/runtime files. LHA and ZIP test packages are integrity-verified; the
+LHA also extracts byte-identically. See
+`evidence/open8-build-20261116.json`.
+
+**This is NOT yet a guest-qualified RC**. Source and data build success is not
+proof of title, workshop, first mission, audio, text entry, graphics
+performance or clean exit. In particular, the OpenGPU SDL2/GL/SDL2_mixer
+client libraries imported into the Open8 stage came from a previously built
+SDK donor, and are not newly rebuilt Open8 modules.
 
 ## First gate
 
