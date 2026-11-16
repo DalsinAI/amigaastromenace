@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import ast
 from dataclasses import dataclass
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import re
 import struct
 import sys
@@ -24,6 +24,18 @@ class Entry:
     source: Path
     offset: int
     size: int
+
+
+def checked_name(value: str) -> str:
+    """VFS filenames are relative POSIX paths; never allow host path escape."""
+    if not isinstance(value, str) or not value or "\\x00" in value or "\\\\" in value:
+        raise RuntimeError("invalid VFS filename")
+    part = PurePosixPath(value)
+    if part.is_absolute() or any(p in (".", "..") for p in value.split("/")):
+        raise RuntimeError(f"unsafe VFS filename: {value!r}")
+    if part.as_posix() != value or ":" in part.parts[0]:
+        raise RuntimeError(f"noncanonical VFS filename: {value!r}")
+    return value
 
 
 def parse_game_data(source: Path) -> list[str]:
@@ -42,7 +54,7 @@ def parse_game_data(source: Path) -> list[str]:
         value = ast.literal_eval(literal)
         if not isinstance(value, str) or not value:
             raise RuntimeError(f"invalid GameData value: {literal}")
-        values.append(value)
+        values.append(checked_name(value))
     if not values:
         raise RuntimeError("GameData array was empty")
     return values
@@ -78,6 +90,7 @@ def parse_models_pack(path: Path) -> tuple[bytes, list[tuple[str, int, int]]]:
         pos += name_size
         offset, size = struct.unpack_from("<II", data, pos)
         pos += 8
+        checked_name(name)
         if name in names:
             raise RuntimeError(f"duplicate models.pack entry: {name}")
         if offset < 16 or offset + size > table_offset:
@@ -120,7 +133,11 @@ def build(source: Path, output: Path) -> None:
         for name in game_data:
             if name in names:
                 raise RuntimeError(f"duplicate VFS entry: {name}")
+            checked_name(name)
             path = raw_root / Path(name)
+            # Refuse symlinks into unrelated files even with a benign name.
+            if not path.resolve(strict=False).is_relative_to(raw_root.resolve()):
+                raise RuntimeError(f"gamedata escapes source root: {name}")
             if not path.is_file():
                 raise RuntimeError(f"missing gamedata file: {name}")
             payload = path.read_bytes()
@@ -157,6 +174,12 @@ def build(source: Path, output: Path) -> None:
         raise RuntimeError("finished VFS header verification failed")
     if len(records) < 100 or actual_table >= len(final):
         raise RuntimeError("finished VFS content verification failed")
+    # Validate all output entries, not just the first sixteen bytes. A bad
+    # table could otherwise pass the release package checks.
+    unpacked, readback = parse_models_pack(output)
+    expected = [(name, offset, size) for name, offset, size in records]
+    if unpacked != final or readback != expected:
+        raise RuntimeError("finished VFS table verification failed")
 
     print(
         f"built {output}: {len(records)} files, {len(final)} bytes, "
