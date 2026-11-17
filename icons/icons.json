@@ -1,0 +1,10 @@
+{
+  "about": "The Workbench icons of the AstroMenace drawer: python3 AMICRADLE/scripts/ports/port_icons.py icons/icons.json --out icons (DalsinAI/amicradle). The art is the game's own 128 x 128 icon (upstream share/astromenace_128.png at bbdb3ac5, CC BY-SA 4.0 with the game's art, licenses/CC-BY-SA-4.0.txt).",
+  "drawer": {"name": "AstroMenace", "file": "AstroMenace-drawer.info"},
+  "badge": "art/astromenace.png",
+  "icons": [
+    {"file": "AstroMenace.info", "kind": "tool"},
+    {"file": "README-AmiCradle.txt.info", "kind": "readme"},
+    {"file": "LICENSE.md.info", "kind": "readme"}
+  ]
+}

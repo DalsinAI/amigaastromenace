@@ -1,0 +1,21 @@
+{
+  "name": "AstroMenace",
+  "version": "git-bbdb3ac-amigaos3",
+  "drawer": "AstroMenace",
+  "program": "AstroMenace",
+  "cpu": "68040",
+  "fpu": true,
+  "space": 158000000,
+  "modules": [
+    "SDL2.module",
+    "SDL2_mixer.module",
+    "GL.module"
+  ],
+  "keep": [
+    "config.xml",
+    "PilotProfiles_1.4.data"
+  ],
+  "parent": "Work:Games",
+  "badge": "../icons/art/astromenace.png",
+  "script": "Install-AstroMenace"
+}
